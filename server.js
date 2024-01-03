@@ -1,5 +1,6 @@
 const express = require("express");
-const fs = require("fs");
+const { readAndAppend, readFromFile } = require("./helpers/fsUtils");
+const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 const app = express();
 
@@ -28,15 +29,16 @@ app.get("/api/notes", (req, res) => {
 app.post("/api/notes", (req, res) => {
   console.log("save info");
   console.log(req.body);
-  fs.readFile("./db/db.json");
+
   const { title, text, note_id } = req.body;
   if (title && text && note_id) {
     const newNote = {
       title,
       text,
-      note_id: uuid(),
+      note_id: uuidv4(),
     };
     readAndAppend(newNote, "./db/db.json");
+    res.json("Note added");
   }
 });
 
