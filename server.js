@@ -29,6 +29,15 @@ app.post("/api/notes", (req, res) => {
   console.log("save info");
   console.log(req.body);
   fs.readFile("./db/db.json");
+  const { title, text, note_id } = req.body;
+  if (title && text && note_id) {
+    const newNote = {
+      title,
+      text,
+      note_id: uuid(),
+    };
+    readAndAppend(newNote, "./db/db.json");
+  }
 });
 
 app.get("*", (req, res) => {
