@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-const uuid = require("uuid");
+// const uuid = require("uuid");
 const path = require("path");
 const app = express();
 
@@ -34,7 +34,7 @@ app.post("/api/notes", (req, res) => {
     const newNote = {
       title,
       text,
-      note_id: uuid(),
+      //   note_id: uuid(),
     };
 
     const noteString = JSON.stringify(newNote);
