@@ -1,6 +1,6 @@
 const express = require("express");
-const { readAndAppend, readFromFile } = require("./helpers/fsUtils");
-const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
+const uuid = require("uuid");
 const path = require("path");
 const app = express();
 
@@ -29,16 +29,40 @@ app.get("/api/notes", (req, res) => {
 app.post("/api/notes", (req, res) => {
   console.log("save info");
   console.log(req.body);
-
   const { title, text, note_id } = req.body;
-  if (title && text && note_id) {
+  if (title && text) {
     const newNote = {
       title,
       text,
-      note_id: uuidv4(),
+      note_id: uuid(),
     };
-    readAndAppend(newNote, "./db/db.json");
-    res.json("Note added");
+
+    const noteString = JSON.stringify(newNote);
+
+    fs.readFile(`./db/db.json`, "utf8", (error, data) => {
+      if (error) console.error(error);
+      else {
+        const parsedData = JSON.parse(data);
+        parsedData.push(newNote);
+
+        fs.writeFile(
+          `./db/db.json`,
+          JSON.stringify(parsedData, null, 4),
+          (error) =>
+            error
+              ? console.error(error)
+              : console.log("New note has been logged!")
+        );
+      }
+    });
+    const notes = {
+      status: "success",
+      body: newNote,
+    };
+    console.log(notes);
+    res.status(201).json(notes);
+  } else {
+    res.status(500).json("Error in posting note.");
   }
 });
 
